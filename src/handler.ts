@@ -2,34 +2,12 @@ import { IncomingMessage, ServerResponse } from "http"
 import { parseJsonFields } from "./utils/parse"
 import { justifyText } from "./utils/justify"
 
-async function readBody(req: IncomingMessage): Promise<Record<string, string>> {
-  return new Promise<Record<string, string>>((resolve, reject) => {
-    
-    let strBody: string = ""
-    let jsonBody: Object = {}
-    
-    // reading body data from the readable stream
-    req.on("readable", () => {
-      console.log("READING STREAM STARTED")
-      strBody += req.read()
-    })
+// API ROUTES
+import { justifyRoute } from "./routes/api/justify"
+import { authRoute } from "./routes/api/auth"
+import { healthCheckRoute } from "./routes/api/health"
 
-    // handling the return value for the json body
-    req.on("end", () => {
-      console.log("END OF STREAM")
-      strBody = strBody.split("null").join("")
-      jsonBody = JSON.parse(strBody)
-      resolve(jsonBody as Record<string, string>)
-    })
-
-    // error handling
-    req.on("error", () => {
-      console.log("STREAM ERROR")
-      reject()
-    })
-
-  })
-}
+import { readBody } from "./utils/readData"
 
 export const handler = async (req: IncomingMessage, res: ServerResponse) => {
   
@@ -39,22 +17,20 @@ export const handler = async (req: IncomingMessage, res: ServerResponse) => {
   try {
     if (url.pathname.startsWith("/api")) { 
 
-      if (METHOD === "POST" && url.pathname === "/api/justify") {
+      if (METHOD === "POST") {
         
         const body = await readBody(req)
-
-        const { text } = parseJsonFields<{ text: string }>(body, [{field: "text", size: 80000}])
-        const justifiedText = justifyText(text)
-
-        res.writeHead(200, {"Content-Type":"Text/plain"})
-        res.write(justifiedText)
-        return res.end()
+        
+        switch (url.pathname) {
+          case "/api/justify": justifyRoute(body, req.headers, res); return;
+          case "/api/token": authRoute(body, res); return;
+          default: break;
+        }
+        
       }
 
       if (METHOD === "GET" && url.pathname === "/api/health") {
-        res.writeHead(200, {"Content-Type":"Text/plain"})
-        res.write("API WORKING!")
-        return res.end()
+        healthCheckRoute(res) 
       }
   }
 

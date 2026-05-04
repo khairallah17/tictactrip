@@ -4,7 +4,7 @@ export function parseJsonFields<T>(data: Record<string, string>, validFields: {f
   let res: boolean = false;
 
   for (let k of keys) {
-    let field = validFields.filter(item => item.field)[0]
+    let field = validFields.filter(item => item.field == k)[0]
     res = k === field.field ? true : false
     if (field.size && (k in data)) {
       if (field.size < data[k].length)
