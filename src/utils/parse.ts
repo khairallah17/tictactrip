@@ -7,12 +7,13 @@ export function parseJsonFields<T>(data: Record<string, string>, validFields: {f
     let field = validFields.filter(item => item.field)[0]
     res = k === field.field ? true : false
     if (field.size && (k in data)) {
-      res = data[k].length > field.size ? false : true
+      if (field.size < data[k].length)
+        throw {type: 402, message: "Payment Required"}
     }
   }
 
   if (!res)
-    throw new Error("Invalid Arguments")
+    throw {type:400, message:"Invalid Arguments"}
 
   return data as T
 

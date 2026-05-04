@@ -17,7 +17,7 @@ async function readBody(req: IncomingMessage): Promise<Record<string, string>> {
     // handling the return value for the json body
     req.on("end", () => {
       console.log("END OF STREAM")
-      strBody = strBody.replace("null","")
+      strBody = strBody.split("null").join("")
       jsonBody = JSON.parse(strBody)
       resolve(jsonBody as Record<string, string>)
     })
@@ -59,7 +59,11 @@ export const handler = async (req: IncomingMessage, res: ServerResponse) => {
   }
 
   } catch (error: any) {
-    console.error(error)
+    if (error.type && error.message) {
+      res.writeHead(error.type, {"Content-Type":"Text/plain"})
+      res.write(error.message as string)
+      return res.end()
+    }
   }
 
   res.writeHead(404, {"Content-Type":"Text/plain"})
