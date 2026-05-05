@@ -1,6 +1,4 @@
 import { IncomingMessage, ServerResponse } from "http"
-import { parseJsonFields } from "./utils/parse"
-import { justifyText } from "./utils/justify"
 
 // API ROUTES
 import { justifyRoute } from "./routes/api/justify"
@@ -30,7 +28,7 @@ export const handler = async (req: IncomingMessage, res: ServerResponse) => {
       }
 
       if (METHOD === "GET" && url.pathname === "/api/health") {
-        healthCheckRoute(res) 
+        return healthCheckRoute(res) 
       }
   }
 

@@ -1,6 +1,8 @@
 import { IncomingHttpHeaders, ServerResponse } from "http"
+
 import { parseJsonFields } from "../../utils/parse"
 import { justifyText } from "../../utils/justify"
+import { verifyToken } from "../../utils/auth"
 
 export const justifyRoute = async (body: Record<string, string>, headers: IncomingHttpHeaders, res: ServerResponse) => {
 
@@ -9,6 +11,11 @@ export const justifyRoute = async (body: Record<string, string>, headers: Incomi
     const authToken = headers.authorization?.split(" ")[1]
 
     if (!authToken)
+      throw {type: 403, message: "unAuthorized"}
+
+    const validToken = verifyToken(authToken)
+
+    if (validToken === null)
       throw {type: 403, message: "unAuthorized"}
 
     const { text } = parseJsonFields<{ text: string }>(body, [{field: "text", size: 80000}])

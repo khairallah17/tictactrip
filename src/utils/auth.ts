@@ -26,6 +26,7 @@ export const verifyToken = (token: string): Object | null => {
 
   // getting the token data
   const [header, body, sig] = token.split(".")
+  console.log({header, body, sig})
   const expectedSig = createHmac('sha256', SECRET)
                         .update(`${header}.${body}`)
                         .digest('base64url')
