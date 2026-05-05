@@ -38,6 +38,9 @@ export const handler = async (req: IncomingMessage, res: ServerResponse) => {
       res.write(error.message as string)
       return res.end()
     }
+    res.writeHead(500, {"Content-Type":"Text/plain"})
+    res.write("Internal Server Error!")
+    return res.end()
   }
 
   res.writeHead(404, {"Content-Type":"Text/plain"})

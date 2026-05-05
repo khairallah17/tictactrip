@@ -3,6 +3,7 @@ import { IncomingHttpHeaders, ServerResponse } from "http"
 import { parseJsonFields } from "../../utils/parse"
 import { justifyText } from "../../utils/justify"
 import { verifyToken } from "../../utils/auth"
+import { addRequest } from "../../utils/rateLimit"
 
 export const justifyRoute = async (body: Record<string, string>, headers: IncomingHttpHeaders, res: ServerResponse) => {
 
@@ -18,8 +19,11 @@ export const justifyRoute = async (body: Record<string, string>, headers: Incomi
     if (validToken === null)
       throw {type: 403, message: "unAuthorized"}
 
-    const { text } = parseJsonFields<{ text: string }>(body, [{field: "text", size: 80000}])
+    const { text } = parseJsonFields<{ text: string }>(body, [{field: "text"}])
     const justifiedText = justifyText(text)
+
+    // calling the rate limit function to store data in memory
+    addRequest(authToken, justifiedText.split(" ").length)
 
     res.writeHead(200, {"Content-Type":"Text/plain"})
     res.write(justifiedText)
