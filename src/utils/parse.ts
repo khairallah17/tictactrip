@@ -1,3 +1,4 @@
+// creating a dynamic function to parse any given json object with valid fields with size rules
 export function parseJsonFields<T>(data: Record<string, string>, validFields: {field: string, size?: number}[]): T{
   
   const keys = Object.keys(data)
