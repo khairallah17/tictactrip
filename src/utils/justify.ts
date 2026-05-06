@@ -2,12 +2,16 @@ export const justifyText = (text: string): string => {
 
   let justifiedText: string = ""
   let count = 0
+  let buffer: string = ""
 
   for (let i = 0 ; i < text.length ; i++) {
-    justifiedText += text[i]
+    buffer += text[i]
     count += 1
     if (count == 80) {
-      justifiedText += '\n'
+      buffer = buffer.trim()
+      buffer += '\n'
+      justifiedText += buffer
+      buffer = ""
       count = 0;
     }
   }

@@ -54,8 +54,6 @@ export const verifyToken = (token: string): Object | null => {
     // converting the body from base64url to valid json object
     const payload = JSON.parse(Buffer.from(body, 'base64url').toString())
 
-    console.log(payload)
-
     // checking if the token is expired
     if (payload.exp && Date.now() / 1000 > payload.exp)
       return null

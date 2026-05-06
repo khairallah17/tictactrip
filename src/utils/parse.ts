@@ -6,8 +6,8 @@ export function parseJsonFields<T>(data: Record<string, string>, validFields: {f
 
   for (let k of keys) {
     let field = validFields.filter(item => item.field == k)[0]
-    res = k === field.field ? true : false
-    if (field.size && (k in data)) {
+    res = k === field?.field ? true : false
+    if (field?.size && (k in data)) {
       if (field.size < data[k].length)
         throw {type: 402, message: "Payment Required"}
     }
